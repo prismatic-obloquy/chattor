@@ -9,4 +9,8 @@ It's built on Tor's onion services, and gives back to the network by encouraging
 
 Chattor is built on proven, tested privacy technology:
 All communications are over Tor, keeping things encrypted and anonymous at the transport layer.
+The public-key cryptography is all ECC based on Curve25519, and the symmetric encryption is AES-256-GCM.
+Monero's Bulletproofs are used as well, in the single place they're required.
+For more technical details, see [/protocol].
 
+  [/protocol]: ./protocol/
