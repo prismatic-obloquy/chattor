@@ -1,4 +1,20 @@
-CONFIG_BUILD = {
+if __name__ == '__main__':
+    import os
+    print("This is *supposed* to be a scons script.")
+    os.chdir(os.path.dirname(__file__))
+    os.execvp('scons', ['scons'])
+
+
+def start_env(mode, target):
+    e = Environment(
+        CFLAGS='-std=c11'
+    )
+    new_src = f'build/{mode}/{target}/'
+    e.VariantDir(new_src, 'src', duplicate=False)
+    return e, new_src
+
+
+MODES = {
     'release': lambda env: env.Environment(
         CCFLAGS=['-g', '-O0'],
     ),
@@ -7,34 +23,36 @@ CONFIG_BUILD = {
     )
 }
 
-TARGET_BUILD = {
-    'library': lambda env: env.Environment(
-            CPPPATH=['src/include']
+TARGETS = {
+    'library': lambda env, src: env.Environment(
+            CPPPATH=[f'{src}/include']
         ).SharedLibrary(
-            target='chattor',
-            source=Glob('src/library/*.c'),
+            target=f'{src}/../chattor',
+            source=Glob(f'{src}/library/*.c'),
         ),
-    'client': lambda env: env.Environment(
-            CPPPATH=['src/include']
+    'client': lambda env, src: env.Environment(
+            CPPPATH=[f'{src}/include']
         ).Program(
-            target='chattor',
-            source=Glob('src/client/*.c') + Glob('src/library/*.c'),
+            target=f'{src}/../chattor',
+            source=Glob(f'{src}/client/*.c') + Glob(f'{src}/library/*.c'),
         ),
-    'test': lambda env: env.Environment(
-            CPPPATH=['src/include']
+    'test': lambda env, src: env.Environment(
+            CPPPATH=[f'{src}/include']
         ).Program(
-            target='chattor',
-            source=Glob('src/test/*.c') + Glob('src/library/*.c'),
+            target=f'{src}/../chattor-lib-test',
+            source=Glob(f'{src}/test/*.c') + Glob(f'{src}/library/*.c'),
         ),
 }
 
-DEFAULT = ('release', 'client')
+AddOption('--mode',
+          type="choice", choices=list(MODES), default='debug')
+AddOption('--target',
+          type="choice", choices=list(TARGETS), default='client')
 
-env = Environment()
-builds = {}
-for cfg_name, cfg_build in CONFIG_BUILD.items():
-    config = {}
-    config_env = cfg_build(env)
-    for tgt_name, tgt_build in TARGET_BUILD.items():
-        config[tgt_name] = tgt_build(config_env)
-    builds[cfg_name] = config
+mode = GetOption('mode')
+target = GetOption('target')
+
+env, src = start_env(mode, target)
+moded = MODES[mode](env)
+targeted = TARGETS[target](moded, src)
+Default(targeted)
