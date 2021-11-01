@@ -1,18 +1,9 @@
 #include <stdbool.h>
 #include <string.h>
-#include <CUnit/TestRun.h>
 
 #include "chattor.h"
 
-void test_1plus1_eq_2(void) {
-    int output = add1(1);
-    CU_ASSERT_EQUAL(output, 2);
-}
-
-void test_failure(void) {
-    int output = add1(3);
-    CU_ASSERT_EQUAL(output, 2);
-}
+#include "add1.c"
 
 bool setup_tests(void) {
     if (CUE_SUCCESS != CU_initialize_registry()) {

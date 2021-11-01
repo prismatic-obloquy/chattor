@@ -11,7 +11,7 @@ set(CLI_SRCS
     src/client/main.c
 )
 set(TEST_SRCS
-    src/test/test.c
+    src/test/main.c
 )
 
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
