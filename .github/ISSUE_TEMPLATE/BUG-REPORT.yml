@@ -1,0 +1,67 @@
+name: Bug Report
+description: When something in the software doesn't work like it should
+labels: ["bug-report", "needs-triage"]
+body:
+  - type: markdown
+    value: |
+      Thanks for finding an issue and reporting it. You can leave bits of this
+      blank, but the more you fill out, the more likely it'll be fixed.
+
+      Before you write anything up, make sure this is the right repository. Is
+      your issue in libchattor.so or the reference client? If it's an issue
+      with your client specifically, please raise an issue there.
+  - type: checkboxes
+    attributes:
+      options:
+        - label: I agree to the project's [Contributor Covenant](https://chattor.obloquy.work/conduct).
+          required: true
+        - label: I've made reasonably sure my issue is with this repo.
+          required: true
+        - label: I know the people working on this are volunteers, donating their time, so I'll be polite.
+          required: true
+  - type: input
+    attributes:
+      label: Short Description
+      description: One quick sentence giving a brief overview of what's up.
+      placeholder: Be concise; there's room for detail later.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Identifying Info
+      description: |
+        The output of `libchattor.so --identify`, which contains detailed
+        information about your installation. There's no personal info, not
+        even filepaths. And just in case, you can review it now.
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        A painfully detailed, step-by-step guide on making this bug happen. If
+        you can't reproduce it consistently, describe what you're doing.
+      placeholder: |
+        1. Run the foo
+        2. Turn up the bar percentage
+        3. Unwind the flux capacitors
+      render: markdown
+  - type: textarea
+    attributes:
+      label: Expected Result
+      description: |
+        What you expected to happen, after finishing the steps to reproduce.
+      placeholder: |
+        The temporal vortex is fractally dissipated.
+      render: markdown
+  - type: textarea
+    attributes:
+      label: Actual Result
+      description: |
+        What actually happened, after finishing the steps to reproduce.
+      placeholder: |
+        The temporal vortex did dissipate, but linearly.
+  - type: textarea
+    attributes:
+      label: More Info
+      description: |
+        Anything else you think should be mentioned.
+      render: markdown

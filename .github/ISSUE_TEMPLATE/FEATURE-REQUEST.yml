@@ -1,0 +1,59 @@
+name: Bug Report
+description: When the software works, but you want something added or changed
+labels: ["feature-request", "needs-triage"]
+body:
+  - type: markdown
+    value: |
+      Thanks for spending your time writing up an idea for chattor.
+
+      Before you write anything up, make sure this is the right repository. Is
+      this a feature in libchattor.so or the reference client? If it's
+      specific to your client, raise the feature request there.
+
+      Fair warning: Not every feature request gets implemented.
+  - type: checkboxes
+    attributes:
+      options:
+        - label: I agree to the project's [Contributor Covenant](https://chattor.obloquy.work/conduct).
+          required: true
+        - label: I've made reasonably sure my feature is relevant to this repo.
+          required: true
+        - label: I know the people working on this are volunteers, donating their time, so I'll be polite.
+          required: true
+  - type: input
+    attributes:
+      label: Short Description
+      description: One quick sentence giving a brief overview of what's up.
+      placeholder: Be concise; there's room for detail later.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Problem
+      description: |
+        Every change should be to solve a problem. That can be something as
+        simple as a painful-to-use API or as complex as a specific usecase
+        that Chattor can't meet, but you think it should.
+
+        Be sure to explain *why* this is a problem, too.
+      render: markdown
+  - type: textarea
+    attributes:
+      label: Solution
+      description: |
+        You've described the problem; now describe how you think it should be
+        solved -- your actual feature request.
+      render: markdown
+  - type: textarea
+    attributes:
+      label: Workaround
+      description: |
+        If there's a way to fix this problem for now, describe it here. This
+        helps explain the problem, and can work as a quick fix for others
+        until a real fix is built.
+  - type: textarea
+    attributes:
+      label: More Info
+      description: |
+        Anything else you think should be mentioned.
+      render: markdown
