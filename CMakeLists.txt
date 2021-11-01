@@ -41,6 +41,10 @@ set_target_properties(test PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
 target_link_libraries(test PRIVATE chattors cunit)
 
+add_custom_target(run-test ALL
+    COMMAND ${PROJECT_BINARY_DIR}/output/test
+    DEPENDS test)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
