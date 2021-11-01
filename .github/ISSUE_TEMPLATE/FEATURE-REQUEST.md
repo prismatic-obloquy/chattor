@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: Feature Request
 about: When the software works, but you want something added or changed
 labels: feature-request, needs-triage
 ---

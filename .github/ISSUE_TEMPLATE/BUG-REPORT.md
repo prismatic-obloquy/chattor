@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-description: When something in the software doesn't work like it should
+about: When something in the software doesn't work like it should
 labels: bug-report, needs-triage
 ---
 <!--
