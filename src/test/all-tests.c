@@ -13,6 +13,7 @@
 | internal behavior as well. For more advice, contact a maintainer.    |
 \**********************************************************************/
 
+#include "main.h"
 #include "add1.c"
 
 bool setup_tests(void) {

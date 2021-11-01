@@ -12,6 +12,7 @@ set(CLI_SRCS
 )
 set(TEST_SRCS
     src/test/main.c
+    src/test/all-tests.c
 )
 
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
