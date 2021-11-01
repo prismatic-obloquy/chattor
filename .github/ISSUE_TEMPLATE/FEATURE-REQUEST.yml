@@ -1,20 +1,21 @@
-name: Bug Report
+name: Feature Request
 description: When the software works, but you want something added or changed
 labels: ["feature-request", "needs-triage"]
 body:
   - type: markdown
-    value: |
-      Thanks for spending your time writing up an idea for chattor.
+    attributes:
+      value: |
+        Thanks for spending your time writing up an idea for chattor.
 
-      Before you write anything up, make sure this is the right repository. Is
-      this a feature in libchattor.so or the reference client? If it's
-      specific to your client, raise the feature request there.
+        Fair warning: Not every feature request gets implemented.
 
-      Fair warning: Not every feature request gets implemented.
+        Before you write anything up, make sure this is the right repository.
+        Is this a feature for libchattor.so or the reference client? If it's
+        specific to your client, raise the feature request there.
   - type: checkboxes
     attributes:
       options:
-        - label: I agree to the project's [Contributor Covenant](https://chattor.obloquy.work/conduct).
+        - label: I agree to the project's [Contributor Covenant](https://chattor.prismatic.obloquy.work/conduct).
           required: true
         - label: I've made reasonably sure my feature is relevant to this repo.
           required: true
@@ -37,6 +38,8 @@ body:
 
         Be sure to explain *why* this is a problem, too.
       render: markdown
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Solution
@@ -44,6 +47,8 @@ body:
         You've described the problem; now describe how you think it should be
         solved -- your actual feature request.
       render: markdown
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Workaround

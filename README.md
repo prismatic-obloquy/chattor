@@ -118,7 +118,7 @@ The more people audit the code, the more confident everyone can be that it's goo
   [EFF]: https://www.eff.org/
   [website-protocol]: https://chattor.prismatic.obloquy.work/protocol
   [insecurity]: https://prismatic.obloquy.work/insecurity
-  [bug-report]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=bug-report%2C+needs-triage&template=BUG-REPORT.md
-  [feature-request]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=feature-request%2C+needs-triage&template=FEATURE-REQUEST.md
+  [bug-report]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=bug-report%2C+needs-triage&template=BUG-REPORT.yml
+  [feature-request]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=feature-request%2C+needs-triage&template=FEATURE-REQUEST.yml
   [triaged-issues]: https://github.com/prismatic-obloquy/chattor/labels/triaged
   [questions]: https://github.com/prismatic-obloquy/chattor/discussions/new?category=questions

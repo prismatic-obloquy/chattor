@@ -3,17 +3,18 @@ description: When something in the software doesn't work like it should
 labels: ["bug-report", "needs-triage"]
 body:
   - type: markdown
-    value: |
-      Thanks for finding an issue and reporting it. You can leave bits of this
-      blank, but the more you fill out, the more likely it'll be fixed.
+    attributes:
+      value: |
+        Thanks for finding an issue and reporting it. You can leave bits of
+        this blank, but the more you fill out, the more likely it'll be fixed.
 
-      Before you write anything up, make sure this is the right repository. Is
-      your issue in libchattor.so or the reference client? If it's an issue
-      with your client specifically, please raise an issue there.
+        Before you write anything up, make sure this is the right repository.
+        Is your issue in libchattor.so or the reference client? If it's an
+        issue with your client specifically, please raise an issue there.
   - type: checkboxes
     attributes:
       options:
-        - label: I agree to the project's [Contributor Covenant](https://chattor.obloquy.work/conduct).
+        - label: I agree to the project's [Contributor Covenant](https://chattor.prismatic.obloquy.work/conduct).
           required: true
         - label: I've made reasonably sure my issue is with this repo.
           required: true
