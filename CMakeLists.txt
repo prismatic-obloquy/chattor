@@ -45,7 +45,9 @@ foreach(test_filename ${TEST_SRCS})
     set_target_properties(chattor-test-${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output/unit-tests)
     target_link_libraries(chattor-test-${test_name} PRIVATE chattors cunit)
-    add_test(NAME unit/${test_name} COMMAND chattor-test-${test_name})
+    add_test(NAME unit/${test_name}
+        COMMAND valgrind --leak-check=full --quiet --error-exitcode=2
+                $<TARGET_FILE:chattor-test-${test_name}>)
 endforeach()
 
 set(CMAKE_C_STANDARD 11)
