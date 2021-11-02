@@ -1,0 +1,54 @@
+name: Question
+description: When you're confused about something, generally
+labels: ["question", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you have a question about Chattor, either the library or the
+        reference client, this is the place to ask.
+
+        If you think you'll have a lot of questions, you may want to ask them
+        all in separate issues -- that'll let us answer the easy ones first
+        and keep track of which ones are left. Alternatively, get in contact
+        [directly](mailto:prismatic@obloquy.work?subject=chattor%20questions&body=So%20I%20had%20some%20questions...).
+
+        Before you write anything up, make sure this is the right repository.
+        Is your issue in libchattor.so or the reference client? If it's a
+        question about your client specifically, please raise an issue there.
+  - type: checkboxes
+    attributes:
+      options:
+        - label: I agree to the project's [Contributor Covenant](https://chattor.prismatic.obloquy.work/conduct).
+          required: true
+        - label: I've made reasonably sure my question is about this repo.
+          required: true
+        - label: I know the people working on this are volunteers, donating their time, so I'll be polite.
+          required: true
+  - type: dropdown
+    attributes:
+      label: Area
+      description: |
+        What part of Chattor are you asking a question about? This helps give
+        your question valuable context.
+      multiple: true
+      options:
+        - Library (libchattor.so)
+        - Reference client
+        - Protocol
+        - Repo guidelines
+        - Everything
+        - I'm not sure
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Version
+      description: |
+        If you're asking about the library or reference client, run it with
+        just `--version` and put that output here.
+  - type: textarea
+    attributes:
+      label: Question
+      description: |
+        Y'know, the thing you want to ask. Be as detailed as you can.
