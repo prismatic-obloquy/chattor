@@ -17,6 +17,6 @@ void test_pass_but_memleak(void) {
 TESTS {
     SUITE(add2, NULL, NULL);
     TEST(add2, test_1plus2_eq_3);
-    TEST(add2, test_pass_but_memleak);
+    // TEST(add2, test_pass_but_memleak);
 }
 

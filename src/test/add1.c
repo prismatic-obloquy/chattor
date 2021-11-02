@@ -15,5 +15,5 @@ void test_failure(void) {
 TESTS {
     SUITE(add1, NULL, NULL);
     TEST(add1, test_1plus1_eq_2);
-    TEST(add1, test_failure);
+    // TEST(add1, test_failure);
 }
