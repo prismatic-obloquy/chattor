@@ -1,5 +1,7 @@
 # Chattor v0.0.1
 
+[![automatic checks](https://github.com/prismatic-obloquy/chattor/actions/workflows/validate.yml/badge.svg)](https://github.com/prismatic-obloquy/chattor/actions/workflows/validate.yml)
+
 Chattor is an anonymized, distributed, and end-to-end encrypted chat system and social network.
 It supports text chat, file transfer, and offline messages, all with public-key cryptography and as anonymous as you want yourself to be.
 It's built on Tor's onion services, and gives back to the network by encouraging every user to run or sponsor a Tor relay too.
