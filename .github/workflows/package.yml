@@ -1,0 +1,23 @@
+# Very nearly actions/starter-workflows' cmake.yml, but with a build matrix
+
+name: automatic checks
+on:
+  push:
+    tags: '*'
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        config: [ Release, RelMinSize ]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Info
+      run: echo Building ${{ matrix.config }} on ${{ matrix.platform }}
+    - name: Configure
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{ matrix.config }}
+    - name: Package
+      run: echo Still need to figure out how to actually package anything
