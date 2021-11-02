@@ -5,3 +5,6 @@
 
 // Adds 1 to the given integer.
 int add1(int a);
+
+// Adds 2 to the given integer.
+int add2(int a);

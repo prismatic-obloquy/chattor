@@ -11,8 +11,8 @@ set(CLI_SRCS
     src/client/main.c
 )
 set(TEST_SRCS
-    src/test/main.c
-    src/test/all-tests.c
+    src/test/add1.c
+    src/test/add2.c
 )
 
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
@@ -21,6 +21,8 @@ math(EXPR VERSION_NUM
 )
 
 project(chattor VERSION ${VERSION})
+
+include(CTest)
 
 add_library(chattor SHARED ${LIB_SRCS})
 set_target_properties(chattor PROPERTIES
@@ -37,14 +39,14 @@ set_target_properties(chattor-cli PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
 target_link_libraries(chattor-cli PRIVATE chattors)
 
-add_executable(test ${TEST_SRCS})
-set_target_properties(test PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
-target_link_libraries(test PRIVATE chattors cunit)
-
-add_custom_target(run-test ALL
-    COMMAND ${PROJECT_BINARY_DIR}/output/test
-    DEPENDS test)
+foreach(test_filename ${TEST_SRCS})
+    get_filename_component(test_name ${test_filename} NAME_WE)
+    add_executable(chattor-test-${test_name} ${test_filename})
+    set_target_properties(chattor-test-${test_name} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output/unit-tests)
+    target_link_libraries(chattor-test-${test_name} PRIVATE chattors cunit)
+    add_test(NAME unit/${test_name} COMMAND chattor-test-${test_name})
+endforeach()
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
