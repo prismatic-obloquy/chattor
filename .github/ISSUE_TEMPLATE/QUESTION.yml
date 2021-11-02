@@ -52,3 +52,5 @@ body:
       label: Question
       description: |
         Y'know, the thing you want to ask. Be as detailed as you can.
+    validations:
+      required: true

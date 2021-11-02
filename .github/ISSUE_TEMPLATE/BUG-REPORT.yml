@@ -34,6 +34,11 @@ body:
         The output of `libchattor.so --identify`, which contains detailed
         information about your installation. There's no personal info, not
         even filepaths. And just in case, you can review it now.
+
+        If this doesn't seem relevant, you may not be using the right form. If
+        you're sure, just write "none".
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Steps to Reproduce
@@ -44,7 +49,8 @@ body:
         1. Run the foo
         2. Turn up the bar percentage
         3. Unwind the flux capacitors
-      render: markdown
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Expected Result
@@ -52,7 +58,8 @@ body:
         What you expected to happen, after finishing the steps to reproduce.
       placeholder: |
         The temporal vortex is fractally dissipated.
-      render: markdown
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Actual Result
@@ -60,6 +67,8 @@ body:
         What actually happened, after finishing the steps to reproduce.
       placeholder: |
         The temporal vortex did dissipate, but linearly.
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: More Info
