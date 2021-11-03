@@ -24,6 +24,10 @@ project(chattor VERSION ${VERSION})
 
 include(CTest)
 
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED true)
+set(CMAKE_C_EXTENSIONS false)
+
 add_library(chattor SHARED ${LIB_SRCS})
 set_target_properties(chattor PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
@@ -45,12 +49,14 @@ foreach(test_filename ${TEST_SRCS})
     set_target_properties(chattor-test-${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output/unit-tests)
     target_link_libraries(chattor-test-${test_name} PRIVATE chattors cunit)
-    add_test(NAME unit/${test_name}
-        COMMAND valgrind --leak-check=full --quiet --error-exitcode=2
-                $<TARGET_FILE:chattor-test-${test_name}>)
+    if(VALGRIND)
+        add_test(NAME unit/${test_name}
+            COMMAND valgrind --leak-check=full --error-exitcode=2
+                    $<TARGET_FILE:chattor-test-${test_name}>)
+    else()
+        add_test(NAME unit/${test_name}
+            COMMAND chattor-test-${test_name})
+    endif()
 endforeach()
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED True)
 
 configure_file(src/include/chattor.h output/include/chattor.h)

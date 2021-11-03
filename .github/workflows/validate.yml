@@ -11,18 +11,21 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [ ubuntu-latest ]
-        config: [ Debug, RelWithDebInfo, RelMinSize ]
+        platform: [ ubuntu-latest, windows-latest, macos-latest ]
+        config: [ Debug, RelMinSize ]
+        valgrind: [ false ]
+        include:
+          - platform: ubuntu-latest
+            config: RelWithDebInfo
+            valgrind: true
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v2
-    # TODO: Figure out how to install libcunit on all platforms
-    - name: Install prereqs
-      run: sudo apt-get install valgrind libcunit1 libcunit1-doc libcunit1-dev
-    - name: Info
-      run: echo Building ${{ matrix.config }} on ${{ matrix.platform }}
+    - name: Install Valgrind if necessary
+      run: sudo apt-get install valgrind
+      if: ${{ matrix.valgrind }}
     - name: Configure
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DVALGRIND=${{ matrix.valgrind }}
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{ matrix.config }}
     - name: Unit testing
