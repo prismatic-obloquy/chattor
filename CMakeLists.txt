@@ -54,7 +54,7 @@ foreach(test_filename ${TEST_SRCS})
     add_executable(chattor-test-${test_name} ${test_filename})
     set_target_properties(chattor-test-${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output/unit-tests)
-    target_link_libraries(chattor-test-${test_name} PRIVATE chattors cunit)
+    target_link_libraries(chattor-test-${test_name} PRIVATE chattors)
     if(VALGRIND)
         add_test(NAME unit/${test_name}
             COMMAND valgrind --leak-check=full --show-leak-kinds=all
