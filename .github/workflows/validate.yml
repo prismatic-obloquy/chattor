@@ -11,7 +11,7 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [ ubuntu-latest, windows-latest, macos-11 ]
+        platform: [ ubuntu-latest, windows-latest ]
         config: [ Debug, RelMinSize ]
         valgrind: [ false ]
         include:
