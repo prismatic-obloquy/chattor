@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         platform: [ ubuntu-latest, windows-latest ]
-        config: [ Debug, RelMinSize ]
+        config: [ Debug, Release ]
         valgrind: [ false ]
         include:
           - platform: ubuntu-latest
