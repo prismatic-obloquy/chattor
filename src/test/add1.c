@@ -2,8 +2,6 @@
 
 #include "chattor.h"
 
-#include <CUnit/TestRun.h>
-
 void test_1plus1_eq_2(const void* data) {
     (void) data;
     int output = add1(1);

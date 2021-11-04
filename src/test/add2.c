@@ -1,7 +1,5 @@
 #include "unit-driver.h"
 
-#include <stdlib.h>
-
 #include "chattor.h"
 
 void test_1plus2_eq_3(const void* data) {
