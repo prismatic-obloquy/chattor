@@ -28,6 +28,12 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED true)
 set(CMAKE_C_EXTENSIONS false)
 
+if (MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+endif()
+
 add_library(chattor SHARED ${LIB_SRCS})
 set_target_properties(chattor PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
@@ -51,7 +57,8 @@ foreach(test_filename ${TEST_SRCS})
     target_link_libraries(chattor-test-${test_name} PRIVATE chattors cunit)
     if(VALGRIND)
         add_test(NAME unit/${test_name}
-            COMMAND valgrind --leak-check=full --error-exitcode=2
+            COMMAND valgrind --leak-check=full --show-leak-kinds=all
+                    --error-exitcode=2
                     $<TARGET_FILE:chattor-test-${test_name}>)
     else()
         add_test(NAME unit/${test_name}
