@@ -29,7 +29,7 @@ set(CMAKE_C_STANDARD_REQUIRED true)
 set(CMAKE_C_EXTENSIONS false)
 
 if (MSVC)
-    add_compile_options(/W3 /WX)
+    add_compile_options(/Wv:18 /W4 /WX)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
