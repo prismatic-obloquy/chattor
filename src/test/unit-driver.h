@@ -28,9 +28,13 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
-#include <threads.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#if UD_THREAD_COUNT > 0
+#   include <threads.h>
+#   include <stdatomic.h>
+#endif
 
 #define UDi_L_FIELDS(elem_t, name) \
     elem_t* name##_ary; int name##_cap; int name##_len
@@ -177,19 +181,64 @@ const char* UDi_asprintf(const char* fmt, ...) {
 
 void UDi_setup_tests(bool*);
 
-thread_local UDi_test* UDi_current_test;
+#if UD_THREAD_COUNT > 0
+thread_local
+#endif
+UDi_test* UDi_current_test;
 void UDi_run_test(UDi_test* test, const void* data) {
     UDi_current_test = test;
     test->run(data);
 }
 
-void UDi_pull_tests(void* v_queue) {
-    (void) v_queue;
-    // TODO: Implement this one
-    // - find tasks to pull
-    // - run them with UDi_run_test
-    // - repeat
+#if UD_THREAD_COUNT > 0
+typedef struct {
+    _Atomic bool running;
+    struct {
+        mtx_t lock;
+        UDi_test* test;
+        const void* data;
+    } items[UD_THREAD_COUNT * 2];
+} UDi_queue;
+
+bool UDi_next_test(UDi_queue* queue, UDi_test** o_test, const void** o_data) {
+    for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
+        if (thrd_busy == mtx_trylock(&queue->items[i].lock)) {
+            continue;
+        }
+        if (queue->items[i].test == NULL) {
+            mtx_unlock(&queue->items[i].lock);
+            continue;
+        }
+        *o_test = queue->items[i].test;
+        *o_data = queue->items[i].data;
+        queue->items[i].test = NULL;
+        queue->items[i].data = NULL;
+        mtx_unlock(&queue->items[i].lock);
+        return true;
+    }
+    return false;
 }
+
+int UDi_pull_tests(void* v_queue) {
+    UDi_queue* queue = v_queue;
+    UDi_test* test;
+    const void* data;
+    while (queue->running) {
+        if (!UDi_next_test(queue, &test, &data)) {
+            thrd_sleep(&(struct timespec) { .tv_nsec = 5000000 }, NULL);
+            continue;
+        }
+        printf("Found test %s; running\n", test->name);
+        UDi_run_test(test, data);
+    }
+    // once the queue is stopped, empty it before finishing up
+    while (UDi_next_test(queue, &test, &data)) {
+        printf("Found test %s; running\n", test->name);
+        UDi_run_test(test, data);
+    }
+    return 0;
+}
+#endif
 
 int main(int argc, char** argv) {
     (void) argc;
@@ -205,33 +254,59 @@ int main(int argc, char** argv) {
     }
 
 #if UD_THREAD_COUNT > 0
-    // TODO: parallelize tests better idk
-    thrd_t threads[UD_THREAD_COUNT];
-    int idx = 0;
-    UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
-        if (idx >= UD_THREAD_COUNT) {
-            // past our first round so wait for the last thread
-            thrd_join(threads[idx % UD_THREAD_COUNT], NULL);
-            printf("Suite #%d done\n", idx - UD_THREAD_COUNT);
+    // Generate all the data first
+    void* datae[UDi_reg.suites_len]; // plural of the plural :)
+    for (int i = 0; i < UDi_reg.suites_len; ++i) {
+        if (UDi_reg.suites_ary[i].init != NULL) {
+            datae[i] = UDi_reg.suites_ary[i].init();
+        } else {
+            datae[i] = NULL;
         }
-        printf("Starting suite #%d\n", idx);
-        thrd_create(&threads[idx % UD_THREAD_COUNT], UD_run_suite, s);
-        idx++;
     }
-    // (note: i points to the one *past* the last thread right now)
-    // join the not-joined threads...
-    if (idx >= UD_THREAD_COUNT) {
-        // i.e. the last UD_THREAD_COUNT threads, since the previous ones were
-        // joined in the first loop
-        for (int i = idx - UD_THREAD_COUNT; i < idx; ++i) {
-            thrd_join(threads[idx % UD_THREAD_COUNT], NULL);
-            printf("Suite #%d done\n", i);
+    thrd_t threads[UD_THREAD_COUNT];
+    UDi_queue queue = {
+        .running = true,
+    };
+    for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
+        mtx_init(&queue.items[i].lock, mtx_plain);
+        queue.items[i].test = NULL;
+        queue.items[i].data = NULL;
+    }
+    for (int i = 0; i < UD_THREAD_COUNT; ++i) {
+        thrd_create(&threads[i], UDi_pull_tests, &queue);
+    }
+    for (int i = 0; i < UDi_reg.suites_len; ++i) {
+        UDi_L_FOREACH((&UDi_reg.suites_ary[i]), tests, UDi_test, t) {
+            while (true) {
+                for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
+                    if (thrd_busy == mtx_trylock(&queue.items[i].lock)) {
+                        continue;
+                    }
+                    if (queue.items[i].test != NULL) {
+                        mtx_unlock(&queue.items[i].lock);
+                        continue;
+                    }
+                    queue.items[i].data = datae[i];
+                    queue.items[i].test = t;
+                    mtx_unlock(&queue.items[i].lock);
+                    goto next_test;
+                }
+                const int SLEEP = 5000000 / UD_THREAD_COUNT;
+                thrd_sleep(&(struct timespec) { .tv_nsec = SLEEP }, NULL);
+            }
+            next_test: (void)0;
         }
-    } else {
-        // i.e. all the threads we've opened
-        for (int i = 0; i < idx; ++i) {
-            thrd_join(threads[i], NULL);
-            printf("Suite #%d done\n", i);
+    }
+    queue.running = false;
+    for (int i = 0; i < UD_THREAD_COUNT; ++i) {
+        thrd_join(threads[i], NULL);
+    }
+    for (int i = 0; i < UDi_reg.suites_len; ++i) {
+        for (int i = 0; i < UDi_reg.suites_len; ++i) {
+            if (UDi_reg.suites_ary[i].clean != NULL) {
+                UDi_reg.suites_ary[i].clean(datae[i]);
+                datae[i] = NULL;
+            }
         }
     }
 #else
@@ -277,9 +352,9 @@ int main(int argc, char** argv) {
     }
     int passTests = totalTests - failTests;
 
-    printf("Passed %.01f%% of tests across %d suites.",
+    printf("Passed %.01f%% of %d tests across %d suites.\n",
             100.0 * passTests / totalTests,
-            totalSuites);
+            totalTests, totalSuites);
 
     // Then we loop through again to print specific failure details.
     UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
@@ -311,7 +386,8 @@ int main(int argc, char** argv) {
 #undef UDi_L_ADD
 #undef UDi_L_FOREACH
 
-#define UDi_STR(x) #x
+#define UDi_STR2(x) #x
+#define UDi_STR(x) UDi_STR2(x)
 #define UDi_LOCATION __FILE__ ":" UDi_STR(__LINE__)
 
 #define UD_REGISTER_TESTS \
