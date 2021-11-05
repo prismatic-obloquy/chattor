@@ -1,6 +1,6 @@
 # Very nearly actions/starter-workflows' cmake.yml, but with a build matrix
 
-name: automatic checks
+name: Automatic Tests
 on:
   push:
     branches: [ release, staging, feature/* ]
@@ -8,30 +8,46 @@ on:
   pull_request:
     branches: [ release, staging, feature/* ]
 jobs:
-  build:
+  # main build and test is on ubuntu, with valgrind
+  build-main:
     strategy:
       matrix:
-        platform: [ ubuntu-latest, windows-latest, macos-latest ]
-        config: [ Debug, RelMinSize ]
-        valgrind: [ false ]
-        include:
-          - platform: ubuntu-latest
-            config: RelWithDebInfo
-            valgrind: true
+        config: [ Debug, RelWithDebInfo ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install prereqs
+      run: sudo apt install valgrind
+    - name: Build
+      run: |
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.config}} -DVALGRIND=true -DTHREADING=true
+        cmake --build ${{github.workspace}}/build --config ${{matrix.config}}
+    - name: Run unit tests
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{matrix.config}} --output-on-failure
+    - name: Run integration tests
+      run: echo TBI
+    - name: Run fuzz tests
+      run: echo TBI
+  # but we still want to test on Windows and Mac, and report if they failed
+  build-alt:
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ windows-latest, macos-11 ]
+        config: [ Debug, Release ]
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v2
-    - name: Install Valgrind if necessary
-      run: sudo apt-get install valgrind
-      if: ${{ matrix.valgrind }}
-    - name: Configure
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DVALGRIND=${{ matrix.valgrind }}
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{ matrix.config }}
-    - name: Unit testing
+      run: |
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.config}}
+        cmake --build ${{github.workspace}}/build --config ${{matrix.config}}
+    - name: Run unit tests
       working-directory: ${{github.workspace}}/build
-      run: ctest -C ${{ matrix.config }} --output-on-failure
-    - name: Integration testing
-      run: echo Integration testing still needs to be implemented
-    - name: Fuzz testing
-      run: echo Fuzz testing still needs to be implemented
+      run: ctest -C ${{matrix.config}} --output-on-failure
+    - name: Run integration tests
+      run: echo TBI
+    - name: Run fuzz tests
+      run: echo TBI

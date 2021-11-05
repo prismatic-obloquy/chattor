@@ -1,22 +1,15 @@
-#include "driver.h"
-
-#include <stdlib.h>
+#include "unit-driver.h"
 
 #include "chattor.h"
 
-void test_1plus2_eq_3(void) {
+void test_1plus2_eq_3(const void* data) {
+    (void) data;
     int output = add2(1);
-    CU_ASSERT_EQUAL(output, 2);
+    UDA_EQUAL(output, 2);
 }
 
-void test_pass_but_memleak(void) {
-    const char* leaked = malloc(123);
-    CU_ASSERT_NOT_EQUAL(leaked, NULL);
-}
-
-TESTS {
-    SUITE(add2, NULL, NULL);
-    TEST(add2, test_1plus2_eq_3);
-    // TEST(add2, test_pass_but_memleak);
+UD_REGISTER_TESTS {
+    UD_SUITE(add2, NULL, NULL);
+    UD_TEST(add2, test_1plus2_eq_3);
 }
 

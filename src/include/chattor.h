@@ -1,7 +1,6 @@
 // Coder's note: Make sure you're editing the one in src/, not build/!
 
-#define C_VERSION "${VERSION}"
-#define C_VERSION_NUM ${VERSION_NUM}
+#define CH_VERSION "0.1.0"
 
 // Adds 1 to the given integer.
 int add1(int a);
