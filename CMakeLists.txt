@@ -34,6 +34,11 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
 
+if (THREADING)
+    add_compile_definitions(THREADING UD_THREAD_COUNT=8)
+    find_package(Threads REQUIRED)
+endif()
+
 add_library(chattor SHARED ${LIB_SRCS})
 set_target_properties(chattor PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output)
@@ -55,7 +60,11 @@ foreach(test_filename ${TEST_SRCS})
     set_target_properties(chattor-test-${test_name} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/output/unit-tests)
     target_link_libraries(chattor-test-${test_name} PRIVATE chattors)
-    if(VALGRIND)
+    if (THREADING)
+        target_link_libraries(chattor-test-${test_name}
+                              PRIVATE Threads::Threads)
+    endif()
+    if (VALGRIND)
         add_test(NAME unit/${test_name}
             COMMAND valgrind --leak-check=full --show-leak-kinds=all
                     --error-exitcode=2
