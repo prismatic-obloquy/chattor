@@ -1,25 +1,49 @@
-/**********************************************************************\
-|                          NOTE TO DEVELOPERS                          |
-+----------------------------------------------------------------------+
-| This file orchestrates all the tests. You shouldn't really need to   |
-| edit it unless you're changing *how* tests work. If you just want to |
-| add or remove tests, see all-tests.c. To change them, edit the test  |
-| itself, init, or cleanup functions in the relevant specific .c file. |
-|                                                                      |
-| The hierarchy of file/suite/test -- because each file is its own     |
-| executable and registry -- is a bit complex. In short, there should  |
-| be (about) one file per library function, one suite per facet of     |
-| that function, and one test per edge case. As a rule of thumb, tests |
-| should have 1-3 asserts, but more complex behaviors might need more. |
-| Asserts can, and often should, test internal state, to ensure the    |
-| function will behave as expected even internally. If you have        |
-| questions or want advice, ask a maintainer.                          |
-\**********************************************************************/
+/***************************************************************************\
+|                          NOTE TO DEVELOPERS                               |
++---------------------------------------------------------------------------+
+| This is Unit Driver. It just orchestrates the tests. You shouldn't edit   |
+| it unless you're changing *how* tests work. If you just want to add or    |
+| remove tests, see all-tests.c. To change them, look for the relevant call |
+| to UD_SUITE and UD_TEST, then edit the functions that those use. Don't    |
+| edit this file unless you know what you're doing.                         |
+|                                                                           |
+| See github.com/prismatic-obloquy/unit-driver/blob/release/README.md#usage |
+| for usage information and guidance.                                       |
++---------------------------------------------------------------------------+
+| Source and docs at https://github.com/prismatic-obloquy/unit-driver       |
++---------------------------------------------------------------------------+
+| Copyright 2021 Prismatic Obloquy                                          |
+|                                                                           |
+| Redistribution and use in source and binary forms, with or without        |
+| modification, are permitted provided that the following conditions are    |
+| met:                                                                      |
+|                                                                           |
+| 1. Redistributions of source code must retain the above copyright notice, |
+| this list of conditions and the following disclaimer.                     |
+|                                                                           |
+| 2. Redistributions in binary form must reproduce the above copyright      |
+| notice, this list of conditions and the following disclaimer in the       |
+| documentation and/or other materials provided with the distribution.      |
+|                                                                           |
+| 3. Neither the name of the copyright holder nor the names of its          |
+| contributors may be used to endorse or promote products derived from this |
+| software without specific prior written permission.                       |
+|                                                                           |
+| THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS   |
+| IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, |
+| THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR    |
+| PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE  COPYRIGHT HOLDER OR        |
+| CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,     |
+| EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,       |
+| PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR        |
+| PROFITS; OR BUSINESS INTERRUPTION) HOWEVER  CAUSED AND ON ANY THEORY OF   |
+| LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY, OR TORT (INCLUDING     |
+| NEGLIGENCE OR OTHERWISE) ARISING IN  ANY WAY OUT OF THE USE OF THIS       |
+| SOFTWARE, EVEN IF ADVISED OF THE  POSSIBILITY OF SUCH DAMAGE.             |
+\***************************************************************************/
 
-#ifdef __UD_PREVIOUSLY__
-#   error Cannot include UnitDriver twice.
-#endif
-#define __UD_PREVIOUSLY__
+#ifndef _UD_PREVIOUSLY_INCLUDED
+#define _UD_PREVIOUSLY_INCLUDED
 
 #ifndef UD_THREAD_COUNT
 #   define UD_THREAD_COUNT 0
@@ -36,13 +60,13 @@
 #   include <stdatomic.h>
 #endif
 
-#define UDi_L_FIELDS(elem_t, name) \
+#define _UD_L_FIELDS(elem_t, name) \
     elem_t* name##_ary; int name##_cap; int name##_len
 
-#define UDi_L_INIT(name) \
+#define _UD_L_INIT(name) \
     .name##_ary = NULL, .name##_cap = 0, .name##_len = 0
 
-#define UDi_L_ADD(cont, name, elem, success) do { \
+#define _UD_L_ADD(cont, name, elem, success) do { \
     if (cont->name##_cap == cont->name##_len) { \
         int new_cap = cont->name##_cap ? cont->name##_cap * 2 : 4; \
         void* new = realloc(cont->name##_ary, \
@@ -62,7 +86,7 @@
     } \
 } while (0)
 
-#define UDi_L_FOREACH(cont, name, elem_t, elem) \
+#define _UD_L_FOREACH(cont, name, elem_t, elem) \
     for ( \
         elem_t* elem = cont->name##_ary; \
         elem < cont->name##_ary + cont->name##_len; \
@@ -77,55 +101,59 @@ typedef struct {
     // note: not obvious, but fail_msg is the only allocated memory here
     const char* location;
     const char* text;
-} UDi_assert;
+} _UD_assert;
 
 typedef struct {
     const char* name;
     UD_test_f run;
 
-    UDi_L_FIELDS(UDi_assert, asserts);
-} UDi_test;
+    _UD_L_FIELDS(_UD_assert, asserts);
+} _UD_test;
 
 typedef struct {
     const char* name;
     UD_init_f init;
     UD_clean_f clean;
 
-    UDi_L_FIELDS(UDi_test, tests);
-} UDi_suite;
+    _UD_L_FIELDS(_UD_test, tests);
+} _UD_suite;
 
 typedef struct {
-    UDi_L_FIELDS(UDi_suite, suites);
-} UDi_registry;
+    _UD_L_FIELDS(_UD_suite, suites);
+} _UD_registry;
 
-static UDi_registry UDi_reg = {
-    UDi_L_INIT(suites),
+static _UD_registry _UD_reg = {
+    _UD_L_INIT(suites),
 };
 
-UDi_suite* UDi_add_suite(const char* name, UD_init_f init, UD_clean_f clean) {
-    UDi_suite new = {
+_UD_suite* _UD_add_suite(const char* name, UD_init_f init, UD_clean_f clean) {
+    if (init == NULL ^ clean == NULL) {
+        // either init is null or clean is null but not both
+        return NULL;
+    }
+    _UD_suite new = {
         .name = name,
         .init = init,
         .clean = clean,
-        UDi_L_INIT(tests),
+        _UD_L_INIT(tests),
     };
     bool succeeded;
-    UDi_L_ADD((&UDi_reg), suites, new, succeeded);
+    _UD_L_ADD((&_UD_reg), suites, new, succeeded);
     if (!succeeded) {
         return NULL;
     } else {
-        return &UDi_reg.suites_ary[UDi_reg.suites_len-1];
+        return &_UD_reg.suites_ary[_UD_reg.suites_len-1];
     }
 }
 
-UDi_test* UDi_add_test(UDi_suite* s, const char* name, UD_test_f run) {
-    UDi_test new = {
+_UD_test* _UD_add_test(_UD_suite* s, const char* name, UD_test_f run) {
+    _UD_test new = {
         .name = name,
         .run = run,
-        UDi_L_INIT(asserts),
+        _UD_L_INIT(asserts),
     };
     bool succeeded;
-    UDi_L_ADD(s, tests, new, succeeded);
+    _UD_L_ADD(s, tests, new, succeeded);
     if (!succeeded) {
         return NULL;
     } else {
@@ -133,16 +161,16 @@ UDi_test* UDi_add_test(UDi_suite* s, const char* name, UD_test_f run) {
     }
 }
 
-UDi_assert* UDi_add_assert(
-    UDi_test* t, const char* location,
+_UD_assert* _UD_add_assert(
+    _UD_test* t, const char* location,
     const char* text
 ) {
-    UDi_assert new = {
+    _UD_assert new = {
         .location = location,
         .text = text,
     };
     bool succeeded;
-    UDi_L_ADD(t, asserts, new, succeeded);
+    _UD_L_ADD(t, asserts, new, succeeded);
     if (!succeeded) {
         return NULL;
     } else {
@@ -150,23 +178,23 @@ UDi_assert* UDi_add_assert(
     }
 }
 
-void UDi_free_suites(void) {
-    UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
-        UDi_L_FOREACH(s, tests, UDi_test, t) {
+void _UD_free_suites(void) {
+    _UD_L_FOREACH((&_UD_reg), suites, _UD_suite, s) {
+        _UD_L_FOREACH(s, tests, _UD_test, t) {
             // nothing to free in each assert, so just free the whole array
             free(t->asserts_ary);
         }
         free(s->tests_ary);
     }
-    free(UDi_reg.suites_ary);
+    free(_UD_reg.suites_ary);
     // only resetting the outer layer because the rest are inaccessible once
     // it's nulled out
-    UDi_reg = (UDi_registry) {
-        UDi_L_INIT(suites),
+    _UD_reg = (_UD_registry) {
+        _UD_L_INIT(suites),
     };
 }
 
-const char* UDi_asprintf(const char* fmt, ...) {
+const char* _UD_asprintf(const char* fmt, ...) {
     va_list count_args;
     va_start(count_args, fmt);
     va_list fmt_args;
@@ -179,14 +207,14 @@ const char* UDi_asprintf(const char* fmt, ...) {
     return res;
 }
 
-void UDi_setup_tests(bool*);
+void _UD_setup_tests(bool*);
 
 #if UD_THREAD_COUNT > 0
 thread_local
 #endif
-UDi_test* UDi_current_test;
-void UDi_run_test(UDi_test* test, const void* data) {
-    UDi_current_test = test;
+_UD_test* _UD_current_test;
+void _UD_run_test(_UD_test* test, const void* data) {
+    _UD_current_test = test;
     test->run(data);
 }
 
@@ -195,12 +223,12 @@ typedef struct {
     _Atomic bool running;
     struct {
         mtx_t lock;
-        UDi_test* test;
+        _UD_test* test;
         const void* data;
     } items[UD_THREAD_COUNT * 2];
-} UDi_queue;
+} _UD_queue;
 
-bool UDi_next_test(UDi_queue* queue, UDi_test** o_test, const void** o_data) {
+bool _UD_next_test(_UD_queue* queue, _UD_test** o_test, const void** o_data) {
     for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
         if (thrd_busy == mtx_trylock(&queue->items[i].lock)) {
             continue;
@@ -219,22 +247,22 @@ bool UDi_next_test(UDi_queue* queue, UDi_test** o_test, const void** o_data) {
     return false;
 }
 
-int UDi_pull_tests(void* v_queue) {
-    UDi_queue* queue = v_queue;
-    UDi_test* test;
+int _UD_pull_tests(void* v_queue) {
+    _UD_queue* queue = v_queue;
+    _UD_test* test;
     const void* data;
     while (queue->running) {
-        if (!UDi_next_test(queue, &test, &data)) {
+        if (!_UD_next_test(queue, &test, &data)) {
             thrd_sleep(&(struct timespec) { .tv_nsec = 5000000 }, NULL);
             continue;
         }
         printf("Found test %s; running\n", test->name);
-        UDi_run_test(test, data);
+        _UD_run_test(test, data);
     }
     // once the queue is stopped, empty it before finishing up
-    while (UDi_next_test(queue, &test, &data)) {
+    while (_UD_next_test(queue, &test, &data)) {
         printf("Found test %s; running\n", test->name);
-        UDi_run_test(test, data);
+        _UD_run_test(test, data);
     }
     return 0;
 }
@@ -244,27 +272,27 @@ int main(int argc, char** argv) {
     (void) argc;
     (void) argv;
     // this is slightly awkward, but means we don't need a `return` at the
-    // end of the UDi_setup_tests definition, which is convenient.
+    // end of the _UD_setup_tests definition, which is convenient.
     bool succeeded = true;
-    UDi_setup_tests(&succeeded);
+    _UD_setup_tests(&succeeded);
     if (!succeeded) {
         puts("Failed to set up tests");
-        UDi_free_suites();
+        _UD_free_suites();
         return 1;
     }
 
 #if UD_THREAD_COUNT > 0
     // Generate all the data first
-    void* datae[UDi_reg.suites_len]; // plural of the plural :)
-    for (int i = 0; i < UDi_reg.suites_len; ++i) {
-        if (UDi_reg.suites_ary[i].init != NULL) {
-            datae[i] = UDi_reg.suites_ary[i].init();
+    void* datae[_UD_reg.suites_len]; // plural of the plural :)
+    for (int i = 0; i < _UD_reg.suites_len; ++i) {
+        if (_UD_reg.suites_ary[i].init != NULL) {
+            datae[i] = _UD_reg.suites_ary[i].init();
         } else {
             datae[i] = NULL;
         }
     }
     thrd_t threads[UD_THREAD_COUNT];
-    UDi_queue queue = {
+    _UD_queue queue = {
         .running = true,
     };
     for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
@@ -273,10 +301,10 @@ int main(int argc, char** argv) {
         queue.items[i].data = NULL;
     }
     for (int i = 0; i < UD_THREAD_COUNT; ++i) {
-        thrd_create(&threads[i], UDi_pull_tests, &queue);
+        thrd_create(&threads[i], _UD_pull_tests, &queue);
     }
-    for (int i = 0; i < UDi_reg.suites_len; ++i) {
-        UDi_L_FOREACH((&UDi_reg.suites_ary[i]), tests, UDi_test, t) {
+    for (int i = 0; i < _UD_reg.suites_len; ++i) {
+        _UD_L_FOREACH((&_UD_reg.suites_ary[i]), tests, _UD_test, t) {
             while (true) {
                 for (int i = 0; i < UD_THREAD_COUNT * 2; ++i) {
                     if (thrd_busy == mtx_trylock(&queue.items[i].lock)) {
@@ -301,19 +329,19 @@ int main(int argc, char** argv) {
     for (int i = 0; i < UD_THREAD_COUNT; ++i) {
         thrd_join(threads[i], NULL);
     }
-    for (int i = 0; i < UDi_reg.suites_len; ++i) {
-        for (int i = 0; i < UDi_reg.suites_len; ++i) {
-            if (UDi_reg.suites_ary[i].clean != NULL) {
-                UDi_reg.suites_ary[i].clean(datae[i]);
+    for (int i = 0; i < _UD_reg.suites_len; ++i) {
+        for (int i = 0; i < _UD_reg.suites_len; ++i) {
+            if (_UD_reg.suites_ary[i].clean != NULL) {
+                _UD_reg.suites_ary[i].clean(datae[i]);
                 datae[i] = NULL;
             }
         }
     }
 #else
-    UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
+    _UD_L_FOREACH((&_UD_reg), suites, _UD_suite, s) {
         void* data = s->init ? s->init() : NULL;
-        UDi_L_FOREACH(s, tests, UDi_test, t) {
-            UDi_run_test(t, data);
+        _UD_L_FOREACH(s, tests, _UD_test, t) {
+            _UD_run_test(t, data);
         }
         if (s->clean) { s->clean(data); };
     }
@@ -330,13 +358,13 @@ int main(int argc, char** argv) {
     int failSuites = 0;
     int failTests = 0;
     int failAsserts = 0;
-    UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
+    _UD_L_FOREACH((&_UD_reg), suites, _UD_suite, s) {
         totalSuites++;
         bool suiteFailed = false;
-        UDi_L_FOREACH(s, tests, UDi_test, t) {
+        _UD_L_FOREACH(s, tests, _UD_test, t) {
             totalTests++;
             bool testFailed = false;
-            UDi_L_FOREACH(t, asserts, UDi_assert, a) {
+            _UD_L_FOREACH(t, asserts, _UD_assert, a) {
                 totalAsserts++;
                 failAsserts++;
                 testFailed = true;
@@ -357,11 +385,11 @@ int main(int argc, char** argv) {
             totalTests, totalSuites);
 
     // Then we loop through again to print specific failure details.
-    UDi_L_FOREACH((&UDi_reg), suites, UDi_suite, s) {
+    _UD_L_FOREACH((&_UD_reg), suites, _UD_suite, s) {
         bool suiteHead = false;
-        UDi_L_FOREACH(s, tests, UDi_test, t) {
+        _UD_L_FOREACH(s, tests, _UD_test, t) {
             bool testHead = false;
-            UDi_L_FOREACH(t, asserts, UDi_assert, a) {
+            _UD_L_FOREACH(t, asserts, _UD_assert, a) {
                 if (!suiteHead) {
                     printf("Suite %s:\n", s->name);
                     suiteHead = true;
@@ -376,27 +404,27 @@ int main(int argc, char** argv) {
         }
     }
 
-    UDi_free_suites();
+    _UD_free_suites();
 
     return failAsserts > 0 ? 1 : 0;
 }
 
-#undef UDi_L_FIELDS
-#undef UDi_L_INIT
-#undef UDi_L_ADD
-#undef UDi_L_FOREACH
+#undef _UD_L_FIELDS
+#undef _UD_L_INIT
+#undef _UD_L_ADD
+#undef _UD_L_FOREACH
 
-#define UDi_STR2(x) #x
-#define UDi_STR(x) UDi_STR2(x)
-#define UDi_LOCATION __FILE__ ":" UDi_STR(__LINE__)
+#define _UD_STR2(x) #x
+#define _UD_STR(x) _UD_STR2(x)
+#define _UD_LOCATION __FILE__ ":" _UD_STR(__LINE__)
 
 #define UD_REGISTER_TESTS \
-    void UDi_setup_tests(bool* succeeded)
+    void _UD_setup_tests(bool* succeeded)
 
 #define UD_SUITE(name, init, clean) \
-    UDi_suite* name##_suite; \
+    _UD_suite* name##_suite; \
     do {\
-        name##_suite = UDi_add_suite(#name, init, clean); \
+        name##_suite = _UD_add_suite(#name, init, clean); \
         if (name##_suite == NULL) { \
             *succeeded = false; \
             return; \
@@ -405,18 +433,20 @@ int main(int argc, char** argv) {
 
 #define UD_TEST(suite, function) \
     do { \
-        if (UDi_add_test(suite##_suite, #function, function) == NULL) { \
+        if (_UD_add_test(suite##_suite, #function, function) == NULL) { \
             *succeeded = false; \
             return; \
         } \
     } while (0)
 
 #define UDA_FAIL(message) \
-    UDi_add_assert(UDi_current_test, UDi_LOCATION, #message)
+    _UD_add_assert(_UD_current_test, _UD_LOCATION, #message)
 
 #define UDA_TRUE(cond) do { \
-    if (!(cond)) { UDi_add_assert(UDi_current_test, UDi_LOCATION, #cond); } \
+    if (!(cond)) { _UD_add_assert(_UD_current_test, _UD_LOCATION, #cond); } \
 } while(0)
 
 #define UDA_EQUAL(lhs, rhs) UDA_TRUE(lhs == rhs)
 #define UDA_NOT_EQUAL(lhs, rhs) UDA_TRUE(lhs != rhs)
+
+#endif
