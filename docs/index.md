@@ -25,7 +25,13 @@ The public-key cryptography is all ECC based on Curve25519, and the symmetric en
 Monero's Bulletproofs are used as well, in the single place they're required.
 For more technical details, see [/protocol].
 
-  [/protocol]: ./protocol/
+Are you interested in helping with Chattor?
+Check out [/contributing].
+Are you trying to use it and struggling?
+There are [plenty of ways][/contact] to get in touch with the people who work on it.
+
+  [/protocol]: ./protocol
+  [/contributing]: ./contributing
   [signal-ads]: https://signal.org/blog/the-instagram-ads-you-will-never-see/
   [google-gdpr]: https://mashable.com/article/google-gdpr-fine-57-million
   [breach1]: https://www.npr.org/2021/04/09/986005820/after-data-breach-exposes-530-million-facebook-says-it-will-not-notify-users

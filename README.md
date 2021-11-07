@@ -5,7 +5,7 @@
 Chattor is an anonymized, distributed, and end-to-end encrypted chat system and social network.
 It supports text chat, file transfer, and offline messages, all with public-key cryptography and as anonymous as you want yourself to be.
 It's built on Tor's onion services, and gives back to the network by encouraging every user to run or sponsor a Tor relay too.
-For more information, see `docs/` in the repo or [the website][chattor-clear-site] (also available in [onion][chattor-onion-site] form).
+For more information, see `docs/` in the repo or [the website][clear-site] (also available in [onion][onion-site] form).
 
 This repository is the reference implementation of [the Chattor protocol][website-protocol], as both a simple command-line client and a production-ready C library.
 There are [plenty of clients][known-clients] and, if you want to make your own, [detailed documentation][api-docs] to help.
@@ -115,8 +115,8 @@ If you're exceptionally generous with your time and effort, you can donate an au
 Any significant issues should be [reported directly][insecurity], but otherwise you're more than welcome to publish your results.
 The more people audit the code, the more confident everyone can be that it's good.
 
-  [chattor-clear-site]: https://chattor.prismatic.obloquy.work/
-  [chattor-onion-site]: https://chattor.prismatic.obloquy.work/ "Okay, not yet. Soon though!"
+  [clear-site]: https://chattor.prismatic.obloquy.work/
+  [onion-site]: https://chattor.prismatic.obloquy.work/ "Okay, not yet. Soon though!"
   [EFF]: https://www.eff.org/
   [website-protocol]: https://chattor.prismatic.obloquy.work/protocol
   [insecurity]: https://prismatic.obloquy.work/insecurity
