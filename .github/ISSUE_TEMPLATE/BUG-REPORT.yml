@@ -20,13 +20,17 @@ body:
           required: true
         - label: I know the people working on this are volunteers, donating their time, so I'll be polite.
           required: true
-  - type: input
-    attributes:
-      label: Short Description
-      description: One quick sentence giving a brief overview of what's up.
-      placeholder: Be concise; there's room for detail later.
-    validations:
-      required: true
+  # Until we've got a clearer idea of how the bits will
+  # be broken down, this is gonna be commented out.
+  # - type: dropdown
+  #   attributes:
+  #     label: Area
+  #     description: What part of Chattor are you reporting a bug in?
+  #     multiple: true
+  #     options:
+  #       - Don't know
+  #   validations:
+  #     required: true
   - type: textarea
     attributes:
       label: Identifying Info

@@ -33,10 +33,11 @@ body:
       label: Problem
       description: |
         Every change should be to solve a problem. That can be something as
-        simple as a painful-to-use API or as complex as a specific usecase
-        that Chattor can't meet, but you think it should.
+        simple as cleaning up a painful-to-use API or as complex as a
+        specific usecase that Chattor can't meet, but you think it should.
 
-        Be sure to explain *why* this is a problem, too.
+        Be sure to explain *why* this is a problem, too. Sometimes it's clear,
+        but it's better to err on the side of overexplaining.
       render: markdown
     validations:
       required: true
