@@ -65,6 +65,9 @@ You should expect comments on it more or less anytime, but especially once you m
 Once you've addressed them, and no one else has comments, odds are good a maintainer has already approved the request and merged it.
 If they haven't, ping one for help.
 
+Finally, before the pull request can actually be merged, you'll need to agree to the [contributor license agreement][/cla], if you haven't already.
+Expect a comment explaining what exactly you need to do.
+
 **Note**:
 Please do *not* create a pull request unless there's a maintainer-approved issue it's addressing, or you're translating.
 For example, if you find a bug and have an idea for how to fix it, please submit an issue with that information -- then, once it's approved, which should be pretty quick, you can put in your PR.
@@ -118,5 +121,7 @@ Finally, once you're done and the writeup is posted, don't forget to let us know
 You can reach out to any maintainer, and we'll add it to the README.
 
   [/contact]: ./contact
+  [/cla]: ./cla
   [bug-report]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=bug-report%2Cneeds-triage&template=BUG-REPORT.yml
-  [feature-request]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=feature-request%2Cneeds-triage&template=FEATURE-REQUEST.ymll   [pull-request]: https://github.com/prismatic-obloquy/chattor/compare
+  [feature-request]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=feature-request%2Cneeds-triage&template=FEATURE-REQUEST.ymll   
+  [pull-request]: https://github.com/prismatic-obloquy/chattor/compare
