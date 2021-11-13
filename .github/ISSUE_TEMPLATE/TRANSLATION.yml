@@ -1,0 +1,74 @@
+name: Translation
+description: Asking or offering to translate Chattor
+labels: ["translation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you need Chattor in another language, or want to translate it, then
+        you're in the right place. Also, thanks!
+
+        Note that *this* issue will be closed almost immediately. The
+        maintainers will create a specific tracking issue
+
+        Try to make sure that what you want translated is actually in this
+        repository. An easy way is to pick some bits of text you want to see
+        in another language, and [search for them][search]. If they come up,
+        keep on going. Otherwise, figure out where they come from -- maybe
+        your Chattor client? -- and ask there.
+
+          [search]: https://github.com/prismatic-obloquy/chattor/search
+  - type: checkboxes
+    attributes:
+      options:
+        - label: I agree to the project's [Code of Conduct](https://chattor.prismatic.obloquy.work/conduct).
+          required: true
+        - label: I've made reasonably sure I'm asking to translate the right thing.
+          required: true
+        - label: I know the people working on this are volunteers, donating their time, so I'll be polite.
+          required: true
+  - type: input
+    attributes:
+      label: Language
+      description: |
+        What language is this translation into? (Please say it in English.)
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Offered
+      description: |
+        How much of this translation can you do?
+
+        "None" is a perfectly valid answer: It just means you're asking the
+        community for help. And that's what these are for.
+      options:
+        - Whole thing, plus maintenance
+        - Whole thing, no maintenance
+        - More than half
+        - A little bit
+        - None
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Fluency
+      description: |
+        If answered anything but 'None' to the last question, how fluent in
+        the language are you?
+      options:
+        - I answered 'None' above
+        - Fully fluent and technical
+        - Fully fluent, not technical
+        - Partially fluent, check my work
+        - Partially fluent, help me directly
+        - Not fluent at all
+  - type: textarea
+    attributes:
+      label: Notes
+      description: |
+        Are there any important things about this translation? Did the two
+        multiple-choice questions above somehow not capture the entirety of
+        what you want to say? Add the rest here.
+    validations:
+      required: true

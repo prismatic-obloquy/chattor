@@ -42,8 +42,13 @@ It's entirely possible to disagree civilly, if the other person is being civil.
 It's important that everyone involved stays 
 
 It also doesn't permit bigotry.
-No matter how you phrase it, hatred is uncivil and has no place in Chattor's development.
-If you make racist remarks, *you are being uncivil*, and you don't get to complain about other people pointing that out.
+No matter how you phrase it, hatred is impolite and has no place in Chattor's development.
+For example, if you make racist remarks and others call you out, *you* were the rude one, not the people who called you out on it.
+
+On top of bigotry, Chattor's dev spaces do not tolerate spam, advertising, or otherwise using the space for your own benefit.
+Chattor's dev spaces are meant to improve Chattor, not your wallet or reputation.
+If you want to talk about something you made, make it clear you made it.
+Likewise, if you'd profit off people using or knowing about it, disclose that too.
 
 Finally, try to keep Chattor's dev spaces relevant to Chattor, and on their designated topic.
 This isn't a hard and fast rule, but the dev spaces are meant to be used for chatter about Chattor, and off-topic discussions can interfere with that.
@@ -123,7 +128,7 @@ Some moderation actions are [publicly logged][/modlog].
 - **Bans**, i.e. permanent ones, are reserved for severe offenses.
   They're logged publicly, forever, both for accountability purposes and to assist others with moderating their own communities.
 
-Moderation actions can generally be appealed, by reaching out to the relevant maintainer directly.
+Moderation actions can generally be appealed, by reaching out to a maintainer directly.
 This isn't an excuse to harass the maintainers, though, and doing that *will* get you permanently banned.
 
   [repo]: https://github.com/prismatic-obloquy/chattor/
