@@ -1,3 +1,8 @@
+---
+title: Modlog
+description: A public log of more serious moderation actions.
+---
+
 # Moderation Log
 
 As mentioned in the [Code of Conduct][/conduct], some moderation actions are logged publicly.

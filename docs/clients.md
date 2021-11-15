@@ -1,3 +1,8 @@
+---
+title: Clients
+description: The list of known and generally good clients.
+---
+
 # Known Clients
 
 None yet.

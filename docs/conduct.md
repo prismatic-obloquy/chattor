@@ -1,3 +1,8 @@
+---
+title: Code of Conduct
+description: Expectations and requirements for contributors' behavior.
+---
+
 # Code of Conduct
 
 > *This code of conduct was heavily inspired by [Building Welcoming Communities](https://opensource.guide/building-community/) and the [Contributor Covenant](https://www.contributor-covenant.org/), but is not identical to either.*

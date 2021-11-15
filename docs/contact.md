@@ -1,3 +1,8 @@
+---
+title: Contact
+description: Info on how to contact Chattor's maintainers.
+---
+
 # Contacting Chattor
 
 The best way to reach out is by [asking a question][question].

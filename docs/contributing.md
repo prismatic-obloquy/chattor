@@ -1,3 +1,8 @@
+---
+title: Contribution Guide
+description: How to contribute, if you want to.
+---
+
 # Contributors' Guide
 
 So, you want to work on Chattor?
