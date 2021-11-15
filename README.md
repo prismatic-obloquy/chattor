@@ -8,7 +8,7 @@ It's built on Tor's onion services, and gives back to the network by encouraging
 For more information, see `docs/` in the repo or [the website][clear-site] (also available in [onion][onion-site] form).
 
 This repository is the reference implementation of [the Chattor protocol][website-protocol], as both a simple command-line client and a production-ready C library.
-There are [plenty of clients][known-clients] and, if you want to make your own, [detailed documentation][api-docs] to help.
+There are [plenty of clients][website-clients] and, if you want to make your own, [detailed documentation][website-api-docs] to help.
 
 > **Security warning**:
 >
@@ -119,6 +119,8 @@ The more people audit the code, the more confident everyone can be that it's goo
   [onion-site]: https://chattor.prismatic.obloquy.work/ "Okay, not yet. Soon though!"
   [EFF]: https://www.eff.org/
   [website-protocol]: https://chattor.prismatic.obloquy.work/protocol
+  [website-clients]: https://chattor.prismatic.obloquy.work/clients
+  [website-api-docs]: https://chattor.prismatic.obloquy.work/api
   [insecurity]: https://prismatic.obloquy.work/insecurity
   [bug-report]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=bug-report%2C+needs-triage&template=BUG-REPORT.yml
   [feature-request]: https://github.com/prismatic-obloquy/chattor/issues/new?assignees=&labels=feature-request%2C+needs-triage&template=FEATURE-REQUEST.yml
